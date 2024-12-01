@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
+// import toast, { Toaster } from 'react-hot-toast';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { Sun, Moon, Bed, Sofa, ChefHat, LampFloor, Mic, MicOff, Loader2, ClipboardList, FileClock, LogOut, User, ArrowLeft } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
@@ -85,7 +88,7 @@ useEffect(() => {
   const fetchUserPreferences = async () => {
     try {
       if (!userId) {
-        toast.error('No user ID found');
+        console.log('No user ID found');
         return;
       }
 
@@ -113,7 +116,6 @@ useEffect(() => {
       }
     } catch (error) {
       console.error('Error fetching user preferences:', error);
-      toast.error('Failed to load user preferences');
     }
   };
 
@@ -124,7 +126,7 @@ useEffect(() => {
   const fetchLogs = async () => {
     try {
       if (!userId) {
-        toast.error('No user ID found');
+        console.log('No user ID found');
         return;
       }
 
@@ -133,7 +135,6 @@ useEffect(() => {
       setLogs(response.data);
     } catch (error) {
       console.error('Error fetching logs:', error);
-      toast.error('Failed to load logs');
     }
   };
 
@@ -146,7 +147,7 @@ useEffect(() => {
     // Map the spoken area to the internal room identifiers
     const mappedRoom = mapAreaToRoom(room);
     if (!mappedRoom) {
-      toast.error(`Unrecognized area: ${room}`);
+      console.log(`Unrecognized area: ${room}`);
       return;
     }
   
@@ -166,8 +167,6 @@ useEffect(() => {
         power = 1; 
       }
     }
-  
-    console.log(power)
     // Update the state for the specified room
     setBulbStates((prev) => ({
       ...prev,
@@ -182,7 +181,6 @@ useEffect(() => {
             power === 1 ? "warm light" : "bright light"
           }`;
     addLog(actionDescription);
-    toast.success(actionDescription);
   };
   
 
@@ -265,9 +263,40 @@ useEffect(() => {
         maxBodyLength: Infinity,
         maxContentLength: Infinity,
       });
-  
       if (response.data) {
         handleVoiceCommand(response.data);
+        const backendResponse = response.data.response;
+      
+      // Directly show toast for backend response
+      toast.success(backendResponse, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+      });
+
+      // toast.success(backendResponse, {
+      //   position: "top-center",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   style: {
+      //     background: '#ffffff',
+      //     color: '#333333',
+      //     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+      //     border: '1px solid #4CAF50',
+      //     borderRadius: '8px',
+      //     padding: '16px',
+      //     fontSize: '16px',
+      //     width: 'auto',
+      //     maxWidth: '400px',
+      //   },
+      // });
         addLog('Voice command processed successfully');
       }
     } catch (error) {
@@ -413,6 +442,15 @@ const LogsPanel = () => {
   return (
     <div className="p-8 max-w-6xl mx-auto bg-gray-100 min-h-screen relative">
       <div className="absolute top-4 left-4">
+      <button
+         onClick={() => window.history.back()}
+        className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span>Back to Profile</span>
+      </button>
+      </div>
+      <div className="absolute top-4 right-4">
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all"
@@ -423,7 +461,7 @@ const LogsPanel = () => {
       </div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
         <RoomCard
           room="kitchen"
           title="Smart Kitchen"

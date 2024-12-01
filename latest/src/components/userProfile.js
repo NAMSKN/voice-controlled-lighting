@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserPlus, Edit2, User, Camera ,LogOut } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '../components/ui/alert';
 import RoomPreferences from './roomPreferences';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UserProfileSelection = () => {
   const navigate = useNavigate();
@@ -43,9 +44,9 @@ const UserProfileSelection = () => {
         const profilesResponse = await axios.get(`http://localhost:5000/users/${adminId}`);
         const processedProfiles = profilesResponse.data.map(profile => ({
           ...profile,
-          imagePath: profile.imagePath 
-            ? `${profile.imagePath}`
-            : null
+          imagePath: profile.imagePath
+          ? `http://localhost:5000/uploads/images/${profile.imagePath.split('\\').pop()}`
+          : null
         }));
         setProfiles(processedProfiles);
         setError('');
@@ -173,13 +174,21 @@ const UserProfileSelection = () => {
 
     return (
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg w-full max-w-md">
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-6">{title}</h3>
+        <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] flex flex-col">
+          {/* Fixed Header */}
+          <div className="p-6 border-b">
+            <h3 className="text-xl font-semibold">{title}</h3>
+          </div>
 
+          {/* Scrollable Content */}
+          <div className="p-6 overflow-y-auto flex-1">
             <div className="space-y-6">
+              {/* Profile Photo Upload */}
               <div className="flex justify-center">
-                <div className="relative cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div 
+                  className="relative cursor-pointer" 
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
                     {formData.photoUrl ? (
                       <img
@@ -204,6 +213,7 @@ const UserProfileSelection = () => {
                 </div>
               </div>
 
+              {/* Name Input */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Name
@@ -218,11 +228,13 @@ const UserProfileSelection = () => {
                 />
               </div>
 
+              {/* Room Preferences Component */}
               <RoomPreferences
                 preferences={formData.preferences}
                 onChange={(newPreferences) => setFormData({ ...formData, preferences: newPreferences })}
               />
 
+              {/* Error Alert */}
               {error && (
                 <Alert variant="destructive">
                   <AlertTitle>Error</AlertTitle>
@@ -232,7 +244,8 @@ const UserProfileSelection = () => {
             </div>
           </div>
 
-          <div className="border-t p-4 flex justify-end gap-4">
+          {/* Fixed Footer */}
+          <div className="border-t p-4 flex justify-end gap-4 bg-white rounded-b-lg">
             <button
               onClick={onClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
@@ -252,17 +265,17 @@ const UserProfileSelection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-8">
-      {/* Add Logout Button */}
-      <div className="absolute top-4 left-4">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-white rounded-lg shadow-md transition-all duration-300"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Logout</span>
-        </button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-white-50 to-gray-50 flex items-center justify-center p-8">
+      <div className="absolute top-4 right-4">
+  <button
+    onClick={handleLogout}
+    className="flex items-center gap-2 px-4 py-2 bg-white/80 hover:bg-white rounded-lg shadow-md transition-all duration-300"
+  >
+    <LogOut className="w-4 h-4" />
+    <span>Logout</span>
+  </button>
+</div>
+
       <div className="max-w-4xl w-full mx-auto mt-8">
 
         <h1 className="text-3xl font-bold text-center mb-12">Who's watching?</h1>
@@ -295,16 +308,24 @@ const UserProfileSelection = () => {
                 )}
               </button>
 
+              
+              
               {profile.role !== 'owner' && (
-                <button
-                  onClick={() => handleEditProfile(profile)}
-                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-2 bg-white rounded-full shadow-lg hover:bg-gray-100"
-                >
-                  <Edit2 className="w-4 h-4 text-gray-600" />
-                </button>
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditProfile(profile);
+                    }}
+                    className="p-2 bg-white rounded-full shadow-lg hover:bg-blue-50 transition-colors"
+                  >
+                    <Edit2 className="w-4 h-4 text-blue-600" />
+                  </button>
+                </div>
               )}
             </div>
           ))}
+            
           
           {profiles.length < 4 && (
             <button
@@ -323,7 +344,7 @@ const UserProfileSelection = () => {
               }}
               className="aspect-square rounded-full bg-white/80 hover:bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center justify-center p-4"
             >
-              <UserPlus className="w-24 h-24 text-gray-400 mb-3" />
+              <UserPlus className="w-20 h-20 text-gray-400 mb-3" />
               <span className="text-base font-medium text-gray-900">
                 Add Profile
               </span>

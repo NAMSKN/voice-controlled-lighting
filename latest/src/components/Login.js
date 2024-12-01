@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import toast, { Toaster } from 'react-hot-toast';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -28,7 +29,7 @@ const Login = () => {
       });
       const { adminId, name } = response.data;
       if (adminId) { 
-        localStorage.setItem('adminId', adminId); // Store adminId in localStorage
+        localStorage.setItem('adminId', adminId);
         toast.success(`Welcome, ${name}!`);
         setTimeout(() => navigate(`/users/${adminId}`), 1000);
       } else {
@@ -43,10 +44,10 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center bg-gradient-to-br from-blue-50 to-indigo-50 px-4 sm:px-6 lg:px-8">
       <Toaster position="top-center" />
-     
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+      
+      <div className="w-full max-w-md mx-auto">
         <div className="flex justify-center">
           <LockClosedIcon className="h-12 w-12 text-indigo-600" />
         </div>
@@ -58,8 +59,8 @@ const Login = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow-lg shadow-indigo-100/50 sm:rounded-lg sm:px-10">
+      <div className="mt-8 w-full max-w-md mx-auto">
+        <div className="bg-white py-8 px-4 shadow-lg shadow-indigo-100/50 rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -113,7 +114,7 @@ const Login = () => {
               >
                 {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
-             
+              
               <button
                 type="button"
                 onClick={() => navigate('/register')}

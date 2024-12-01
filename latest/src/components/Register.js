@@ -8,7 +8,7 @@ import RoomPreferences from './roomPreferences';
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    adminName: '',
+    Name: '',
     userName: '',
     password: '',
     confirmPassword: '',
@@ -41,16 +41,14 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
   
-    // Validate password match
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       setIsLoading(false);
       return;
     }
   
-    // Prepare data to be sent to the backend
     const requestData = {
-      name: formData.adminName,
+      name: formData.Name,
       username: formData.userName,
       password: formData.password,
       houseAddress: formData.houseAddress,
@@ -58,91 +56,87 @@ const Register = () => {
     };
   
     try {
-      // Send request to backend
       await axios.post('http://localhost:5000/register', requestData);
-      
-      // On success, show success message and navigate
       toast.success('Registration successful!');
       setTimeout(() => {
         navigate('/', { state: { message: 'Registration successful! Please login.' } });
       }, 1500);
     } catch (error) {
-      // Handle error and show message
       console.error('Registration error:', error);
       toast.error('Registration failed. Please try again.');
     } finally {
-      // Reset loading state
       setIsLoading(false);
     }
   };
-  
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 to-indigo-50 p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 px-4 py-8 flex items-center justify-center">
       <Toaster position="top-center" />
      
-      <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg shadow-indigo-100/50 p-6">
-        <div className="flex flex-col items-center mb-4">
+      <div className="w-full max-w-4xl bg-white rounded-xl shadow-lg shadow-indigo-100/50 p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col items-center mb-6">
           <UserPlusIcon className="h-10 w-10 text-indigo-600" />
-          <h2 className="mt-2 text-2xl font-bold text-gray-900">Create your account</h2>
-          <p className="text-sm text-gray-600">Register to manage your smart home system</p>
+          <h2 className="mt-2 text-2xl font-bold text-gray-900 text-center">Create your account</h2>
+          <p className="text-sm text-gray-600 text-center">Register to manage your smart home system</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             {/* Left Column */}
-            {['adminName', 'userName', 'houseAddress'].map((field) => (
-              <div key={field}>
-                <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
-                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
-                </label>
-                <input
-                  id={field}
-                  name={field}
-                  type="text"
-                  required
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                  placeholder={`Enter your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
-                />
-              </div>
-            ))}
-          </div>
+            <div className="space-y-4">
+              {['Name', 'userName', 'houseAddress'].map((field) => (
+                <div key={field}>
+                  <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
+                    {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                  </label>
+                  <input
+                    id={field}
+                    name={field}
+                    type="text"
+                    required
+                    value={formData[field]}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    placeholder={`Enter your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
+                  />
+                </div>
+              ))}
+            </div>
 
-          <div className="space-y-4">
             {/* Right Column */}
-            {[
-              { name: 'password', type: 'password' },
-              { name: 'confirmPassword', type: 'password' },
-            ].map((field) => (
-              <div key={field.name}>
-                <label htmlFor={field.name} className="block text-sm font-medium text-gray-700 mb-1">
-                  {field.name.charAt(0).toUpperCase() + field.name.slice(1).replace(/([A-Z])/g, ' $1')}
-                </label>
-                <input
-                  id={field.name}
-                  name={field.name}
-                  type={field.type}
-                  required
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                  placeholder={`Enter your ${field.name.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
-                />
-              </div>
-            ))}
+            <div className="space-y-4">
+              {[
+                { name: 'password', type: 'password' },
+                { name: 'confirmPassword', type: 'password' },
+              ].map((field) => (
+                <div key={field.name}>
+                  <label htmlFor={field.name} className="block text-sm font-medium text-gray-700 mb-1">
+                    {field.name.charAt(0).toUpperCase() + field.name.slice(1).replace(/([A-Z])/g, ' $1')}
+                  </label>
+                  <input
+                    id={field.name}
+                    name={field.name}
+                    type={field.type}
+                    required
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    placeholder={`Enter your ${field.name.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Add Room Preferences component */}
-          <div className="col-span-2">
+          {/* Room Preferences */}
+          <div className="w-full">
             <RoomPreferences
               preferences={formData.preferences}
               onChange={handlePreferencesChange}
             />
           </div>
 
-          <div className="col-span-2 space-y-3 mt-4">
+          <div className="space-y-3 pt-4">
             <button
               type="submit"
               disabled={isLoading}
@@ -165,4 +159,4 @@ const Register = () => {
   );
 };
 
-export default Register;  
+export default Register;
