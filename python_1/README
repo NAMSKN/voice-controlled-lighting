@@ -73,6 +73,9 @@ source ~/.bashrc  # or source ~/.zshrc
 source venv/bin/activate  # On macOS/Linux
 venv\Scripts\activate     # On Windows
 
+
+# Run the sql commands for creating tables in ur schema. Drop the tables in `voice_control_system`
+
 # Run the application
 python App.py
 ```
