@@ -23,7 +23,7 @@ CORS(app, resources={r"/*": {
 # Database connection configuration
 db_config = {
     'user': 'root',
-    'password': 'Dharm-aduty8',
+    'password': 'root',
     'host': 'localhost',
     'database': 'voice_control_system',
     'ssl_disabled': True,
